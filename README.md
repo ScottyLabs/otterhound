@@ -1,4 +1,4 @@
-# Otterhound
+# Infrastructure
 
 This repository contains Infrastructure as Code (IaC) for ScottyLabs using OpenTofu.
 
