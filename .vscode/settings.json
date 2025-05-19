@@ -1,0 +1,5 @@
+{
+    "files.readonlyInclude": {
+        ".terraform.lock.hcl": true,
+    }
+}
