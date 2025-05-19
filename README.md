@@ -29,34 +29,47 @@ Profile name: scottylabs
 
 ## Usage
 
+New team members should:
+
+1. Complete the **Setup** section above
+2. Clone this repository
+3. Run `tofu init` in any directory they need to work with
+
 > [!NOTE]
 > The following commands assume that you have the environment variable `AWS_PROFILE=scottylabs` set. You can either prepend this to every command or set it once at the start of your session: `export AWS_PROFILE=scottylabs`.
 
 Each of the following set of instructions assume you are working from the root of this repository.
 
-### Initial (one-time) Setup
+### Working with Infrastructure
 
-You should not need to run this step again. To create an AWS account for each environment using Organizations, use the following steps:
-
-```
+```bash
+# For organization changes
 cd bootstrap/organization
-tofu init
 tofu plan
 tofu apply
-```
 
-### Environment Deployments
-
-```
-# Replace "dev" with the appropriate environment
+# For environment-specific changes, e.g. "dev"
 cd environments/dev
-tofu init
+tofu init # Only needed once per directory
 tofu plan
 tofu apply
 ```
 
 ### Common commands
 
-* Check current AWS identity: `aws sts get-caller-identity`
-* Refresh SSO credentials when they expire: `aws sso login --profile scottylabs`
-* View outputs from any module: `tofu output`
+```bash
+# Check current AWS identity
+aws sts get-caller-identity
+
+# Refresh SSO credentials (when expired)
+aws sso login --profile scottylabs
+
+# View outputs from any module
+tofu output
+
+# Format all OpenTofu files
+tofu fmt -recursive
+
+# Validate configuration
+tofu validate
+```
