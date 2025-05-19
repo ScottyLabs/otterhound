@@ -29,7 +29,7 @@ Profile name: scottylabs
 
 ## Usage
 
-> [!INFO]
+> [!NOTE]
 > The following commands assume that you have the environment variable `AWS_PROFILE=scottylabs` set. You can either prepend this to every command or set it once at the start of your session: `export AWS_PROFILE=scottylabs`.
 
 Each of the following set of instructions assume you are working from the root of this repository.
