@@ -17,7 +17,8 @@ resource "aws_organizations_organization" "main" {
   feature_set = "ALL"
 
   aws_service_access_principals = [
-    "sso.amazonaws.com",               # AWS SSO/IAM Identity Center
+    "sso.amazonaws.com",             # AWS SSO/IAM Identity Center
+    "account.amazonaws.com"          # AWS Account Management
   ]
 }
 
