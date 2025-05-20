@@ -6,5 +6,9 @@ terraform.tfstate
 terraform.tfstate.backup
 .terraform.tfstate.lock.info
 
+# Terragrunt
+.terragrunt-cache
+backend.tf
+
 # OS
 .DS_Store
