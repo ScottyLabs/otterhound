@@ -22,7 +22,7 @@ CLI default output format: json
 Profile name: scottylabs
 ```
 
-5. Log in to SSO using the profile you just created: `aws sso login --profile scottylabs`.
+5. Set up the AWS profiles for each environment: `./scripts/setup-accounts.sh`.
 
 > [!WARNING]
 > If AWS opens the browser but gets stuck loading, try copying the URL and opening it in another browser, like Safari.
@@ -31,26 +31,30 @@ Profile name: scottylabs
 
 New team members should:
 
-1. Complete the **Setup** section above
-2. Clone this repository
+1. Clone this repository
+2. Complete the **Setup** section above
 3. Run `tofu init` in any directory they need to work with
 
 > [!NOTE]
-> The following commands assume that you have the environment variable `AWS_PROFILE=scottylabs` set. You can either prepend this to every command or set it once at the start of your session: `export AWS_PROFILE=scottylabs`.
+> The following commands assume that you have the environment variable `AWS_PROFILE` set. It is recommended to set it once at the start of your session: `export AWS_PROFILE=scottylabs-dev` (or staging, prod).
 
 Each of the following set of instructions assume you are working from the root of this repository.
 
 ### Working with Infrastructure
 
-```bash
-# For organization changes
-cd bootstrap/organization
-tofu plan
-tofu apply
+This uses the `keycloak` service and the `dev` environment as an example. Change these values to your needs.
 
-# For environment-specific changes, e.g. "dev"
-cd environments/dev
-tofu init # Only needed once per directory
+```bash
+# Ensure you're working in the right account
+export AWS_PROFILE=scottylabs-dev # (or staging, prod)
+
+# Create the directory before initializing
+mkdir services/keycloak
+
+# Initialize OpenTofu (only needed once per directory)
+./scripts/init-service.sh keycloak dev
+
+# After making changes
 tofu plan
 tofu apply
 ```
@@ -58,11 +62,12 @@ tofu apply
 ### Common commands
 
 ```bash
-# Check current AWS identity
-aws sts get-caller-identity
-
 # Refresh SSO credentials (when expired)
 aws sso login --profile scottylabs
+
+# Check current AWS identity
+# (if this fails, run the above command first)
+aws sts get-caller-identity
 
 # View outputs from any module
 tofu output
