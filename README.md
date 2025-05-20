@@ -35,7 +35,6 @@ New team members should:
 
 1. Complete the **Setup** section above
 2. Clone this repository
-3. Run `tofu init` in any directory they need to work with
 
 > [!NOTE]
 > The following commands assume that you have the environment variable `AWS_PROFILE=scottylabs` set. You can either prepend this to every command or set it once at the start of your session: `export AWS_PROFILE=scottylabs`.
@@ -47,14 +46,13 @@ Each of the following set of instructions assume you are working from the root o
 ```bash
 # For organization changes
 cd bootstrap/organization
-tofu plan
-tofu apply
+terragrunt plan
+terragrunt apply
 
 # For environment-specific changes, e.g. "dev"
 cd environments/dev
-tofu init # Only needed once per directory
-tofu plan
-tofu apply
+terragrunt plan
+terragrunt apply
 ```
 
 ### Common commands
@@ -67,11 +65,12 @@ aws sts get-caller-identity
 aws sso login --profile scottylabs
 
 # View outputs from any module
-tofu output
+terragrunt output
 
 # Format all OpenTofu files
+terragrunt hcl format
 tofu fmt -recursive
 
 # Validate configuration
-tofu validate
+terragrunt validate
 ```
