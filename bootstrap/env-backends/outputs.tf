@@ -12,15 +12,15 @@ output "backend_configs" {
   value = {
     dev = {
       bucket   = aws_s3_bucket.dev_state.bucket
-      role_arn = "arn:aws:iam::${data.terraform_remote_state.organization.outputs.account_ids.dev}:role/OrganizationAccountAccessRole"
+      role_arn = "arn:aws:iam::${var.account_ids.dev}:role/OrganizationAccountAccessRole"
     }
     staging = {
       bucket   = aws_s3_bucket.staging_state.bucket
-      role_arn = "arn:aws:iam::${data.terraform_remote_state.organization.outputs.account_ids.staging}:role/OrganizationAccountAccessRole"
+      role_arn = "arn:aws:iam::${var.account_ids.staging}:role/OrganizationAccountAccessRole"
     }
     prod = {
       bucket   = aws_s3_bucket.prod_state.bucket
-      role_arn = "arn:aws:iam::${data.terraform_remote_state.organization.outputs.account_ids.prod}:role/OrganizationAccountAccessRole"
+      role_arn = "arn:aws:iam::${var.account_ids.prod}:role/OrganizationAccountAccessRole"
     }
   }
 }

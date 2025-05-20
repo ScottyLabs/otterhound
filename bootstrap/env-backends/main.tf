@@ -2,24 +2,11 @@ terraform {
   # We need this for S3-native state locking
   required_version = ">= 1.10.0"
 
-  # Values provided during init
-  backend "s3" {}
-
   required_providers {
     aws = {
       source  = "hashicorp/aws"
       version = "= 6.0.0-beta1" # Update this to "~> 6.0" when available
     }
-  }
-}
-
-# Get account IDs from organization remote state
-data "terraform_remote_state" "organization" {
-  backend = "s3"
-  config = {
-    bucket = var.management_state_bucket
-    key    = "bootstrap/organization/terraform.tfstate"
-    region = var.aws_region
   }
 }
 
@@ -29,7 +16,7 @@ provider "aws" {
   region = var.aws_region
 
   assume_role {
-    role_arn = "arn:aws:iam::${data.terraform_remote_state.organization.outputs.account_ids.dev}:role/OrganizationAccountAccessRole"
+    role_arn = "arn:aws:iam::${var.account_ids.dev}:role/OrganizationAccountAccessRole"
   }
 }
 
@@ -38,7 +25,7 @@ provider "aws" {
   region = var.aws_region
 
   assume_role {
-    role_arn = "arn:aws:iam::${data.terraform_remote_state.organization.outputs.account_ids.staging}:role/OrganizationAccountAccessRole"
+    role_arn = "arn:aws:iam::${var.account_ids.staging}:role/OrganizationAccountAccessRole"
   }
 }
 
@@ -47,14 +34,14 @@ provider "aws" {
   region = var.aws_region
 
   assume_role {
-    role_arn = "arn:aws:iam::${data.terraform_remote_state.organization.outputs.account_ids.prod}:role/OrganizationAccountAccessRole"
+    role_arn = "arn:aws:iam::${var.account_ids.prod}:role/OrganizationAccountAccessRole"
   }
 }
 
 # S3 bucket for each environment's state
 resource "aws_s3_bucket" "dev_state" {
   provider = aws.dev
-  bucket   = "scottylabs-tofu-state-dev-${data.terraform_remote_state.organization.outputs.account_ids.dev}"
+  bucket   = "scottylabs-tofu-state-dev-${var.account_ids.dev}"
 
   tags = {
     Name        = "ScottyLabs OpenTofu Dev State"
@@ -65,7 +52,7 @@ resource "aws_s3_bucket" "dev_state" {
 
 resource "aws_s3_bucket" "staging_state" {
   provider = aws.staging
-  bucket   = "scottylabs-tofu-state-staging-${data.terraform_remote_state.organization.outputs.account_ids.staging}"
+  bucket   = "scottylabs-tofu-state-staging-${var.account_ids.staging}"
 
   tags = {
     Name        = "ScottyLabs OpenTofu Staging State"
@@ -76,7 +63,7 @@ resource "aws_s3_bucket" "staging_state" {
 
 resource "aws_s3_bucket" "prod_state" {
   provider = aws.prod
-  bucket   = "scottylabs-tofu-state-prod-${data.terraform_remote_state.organization.outputs.account_ids.prod}"
+  bucket   = "scottylabs-tofu-state-prod-${var.account_ids.prod}"
 
   tags = {
     Name        = "ScottyLabs OpenTofu Prod State"

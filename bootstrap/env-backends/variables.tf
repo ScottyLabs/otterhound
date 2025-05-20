@@ -1,6 +1,11 @@
-variable "management_state_bucket" {
-  description = "Name of the management S3 bucket containing organization state"
-  type        = string
+variable "account_ids" {
+  description = "Account IDs from organization"
+  type = object({
+    management = string
+    dev        = string
+    staging    = string
+    prod       = string
+  })
 }
 
 variable "aws_region" {
