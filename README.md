@@ -1,18 +1,16 @@
 # Infrastructure
 
-This repository contains Infrastructure as Code (IaC) for ScottyLabs using Terragrunt and OpenTofu.
+This repository contains Infrastructure as Code (IaC) for ScottyLabs using OpenTofu.
 
 ## Setup
 
-1. [Install Terragrunt](https://terragrunt.gruntwork.io/docs/getting-started/install/).
+1. [Install `tofuenv`](https://github.com/tofuutils/tofuenv?tab=readme-ov-file#installation). We use `tofuenv` to manage OpenTofu installations. Compare to `nvm` for Node.js.
 
-2. [Install `tofuenv`](https://github.com/tofuutils/tofuenv?tab=readme-ov-file#installation). We use `tofuenv` to manage OpenTofu installations. Compare to `nvm` for Node.js.
+2. Install OpenTofu with `tofuenv install`. This will automatically target the version specified in `.opentofu-version` in this repository.
 
-3. Install OpenTofu with `tofuenv install`. This will automatically target the version specified in `.opentofu-version` in this repository.
+3. Install the [`aws` CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html#getting-started-install-instructions).
 
-4. Install the [`aws` CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html#getting-started-install-instructions).
-
-5. Configure the AWS CLI for SSO using `aws configure sso`. Use the following values:
+4. Configure the AWS CLI for SSO using `aws configure sso`. Use the following values:
 
 ```
 SSO session name: scottylabs
@@ -24,7 +22,7 @@ CLI default output format: json
 Profile name: scottylabs
 ```
 
-6. Log in to SSO using the profile you just created: `aws sso login --profile scottylabs`.
+5. Log in to SSO using the profile you just created: `aws sso login --profile scottylabs`.
 
 > [!WARNING]
 > If AWS opens the browser but gets stuck loading, try copying the URL and opening it in another browser, like Safari.
@@ -35,6 +33,7 @@ New team members should:
 
 1. Complete the **Setup** section above
 2. Clone this repository
+3. Run `tofu init` in any directory they need to work with
 
 > [!NOTE]
 > The following commands assume that you have the environment variable `AWS_PROFILE=scottylabs` set. You can either prepend this to every command or set it once at the start of your session: `export AWS_PROFILE=scottylabs`.
@@ -46,13 +45,14 @@ Each of the following set of instructions assume you are working from the root o
 ```bash
 # For organization changes
 cd bootstrap/organization
-terragrunt plan
-terragrunt apply
+tofu plan
+tofu apply
 
 # For environment-specific changes, e.g. "dev"
 cd environments/dev
-terragrunt plan
-terragrunt apply
+tofu init # Only needed once per directory
+tofu plan
+tofu apply
 ```
 
 ### Common commands
@@ -65,12 +65,11 @@ aws sts get-caller-identity
 aws sso login --profile scottylabs
 
 # View outputs from any module
-terragrunt output
+tofu output
 
 # Format all OpenTofu files
-terragrunt hcl format
 tofu fmt -recursive
 
 # Validate configuration
-terragrunt validate
+tofu validate
 ```

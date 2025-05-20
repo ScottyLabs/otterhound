@@ -1,6 +1,6 @@
 # Bootstrap
 
-This project uses remote state with OpenTofu 1.10.0's support for S3 native locking (no DynamoDB required) and Terragrunt for managing configuration.
+This project uses remote state with OpenTofu 1.10.0's support for S3 native locking (no DynamoDB required).
 
 `backend/` uses local state to create the management S3 bucket. This bucket stores the state for `organization/` and the individual S3 buckets for each environment account.
 
@@ -12,19 +12,54 @@ Only the **first person to set up the repository** needs to follow these steps.
 
 ```bash
 cd backend
-terragrunt apply
+
+tofu init
+tofu apply
 ```
 
 2. Configure organization with remote state:
 
 ```bash
 cd ../organization
-terragrunt apply
+
+# Initialize with management state bucket
+MANAGEMENT_BUCKET=$(cd ../backend && tofu output -raw bootstrap_bucket_name)
+tofu init \
+  -backend-config="bucket=${MANAGEMENT_BUCKET}" \
+  -backend-config="key=bootstrap/organization/terraform.tfstate" \
+  -backend-config="region=us-east-2" \
+  -backend-config="use_lockfile=true" \
+  -backend-config="encrypt=true"
+
+# When prompted, type "yes" to migrate state to S3
+
+# Create the organization and environment accounts
+tofu plan
+tofu apply
 ```
 
 3. Create the environment state buckets:
 
 ```bash
 cd ../env-backends
-terragrunt apply
+
+# Initialize with management state bucket
+tofu init \
+  -backend-config="bucket=${MANAGEMENT_BUCKET}" \
+  -backend-config="key=bootstrap/env-backends/terraform.tfstate" \
+  -backend-config="region=us-east-2" \
+  -backend-config="use_lockfile=true" \
+  -backend-config="encrypt=true"
+
+# Set the account_ids variable
+ACCOUNT_IDS=$(cd ../organization && tofu output -json account_ids)
+echo "$ACCOUNT_IDS" | jq '{ account_ids: . }' > ../env-backends/terraform.tfvars.json
+cd ../env-backends
+
+# Create state buckets in each environment account
+tofu plan
+tofu apply
+
+# Note the environment bucket names from the output
+tofu output state_bucket_names
 ```

@@ -2,13 +2,10 @@
 .terraform/
 .terraform.lock.hcl.backup
 terraform.tfvars
+terraform.tfvars.json
 terraform.tfstate
 terraform.tfstate.backup
 .terraform.tfstate.lock.info
-
-# Terragrunt
-.terragrunt-cache
-backend.tf
 
 # OS
 .DS_Store
