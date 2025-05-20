@@ -1,16 +1,18 @@
 # Infrastructure
 
-This repository contains Infrastructure as Code (IaC) for ScottyLabs using OpenTofu.
+This repository contains Infrastructure as Code (IaC) for ScottyLabs using Terragrunt and OpenTofu.
 
 ## Setup
 
-1. [Install `tofuenv`](https://github.com/tofuutils/tofuenv?tab=readme-ov-file#installation). We use `tofuenv` to manage OpenTofu installations. Compare to `nvm` for Node.js.
+1. [Install Terragrunt](https://terragrunt.gruntwork.io/docs/getting-started/install/).
 
-2. Install OpenTofu with `tofuenv install`. This will automatically target the version specified in `.opentofu-version` in this repository.
+2. [Install `tofuenv`](https://github.com/tofuutils/tofuenv?tab=readme-ov-file#installation). We use `tofuenv` to manage OpenTofu installations. Compare to `nvm` for Node.js.
 
-3. Install the [`aws` CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html#getting-started-install-instructions).
+3. Install OpenTofu with `tofuenv install`. This will automatically target the version specified in `.opentofu-version` in this repository.
 
-4. Configure the AWS CLI for SSO using `aws configure sso`. Use the following values:
+4. Install the [`aws` CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html#getting-started-install-instructions).
+
+5. Configure the AWS CLI for SSO using `aws configure sso`. Use the following values:
 
 ```
 SSO session name: scottylabs
@@ -22,7 +24,7 @@ CLI default output format: json
 Profile name: scottylabs
 ```
 
-5. Log in to SSO using the profile you just created: `aws sso login --profile scottylabs`.
+6. Log in to SSO using the profile you just created: `aws sso login --profile scottylabs`.
 
 > [!WARNING]
 > If AWS opens the browser but gets stuck loading, try copying the URL and opening it in another browser, like Safari.
