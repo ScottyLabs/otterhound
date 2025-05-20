@@ -54,7 +54,6 @@ tofu init \
 # Set the account_ids variable
 ACCOUNT_IDS=$(cd ../organization && tofu output -json account_ids)
 echo "$ACCOUNT_IDS" | jq '{ account_ids: . }' > ../env-backends/terraform.tfvars.json
-cd ../env-backends
 
 # Create state buckets in each environment account
 tofu plan
