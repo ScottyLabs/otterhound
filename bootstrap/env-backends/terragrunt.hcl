@@ -1,6 +1,6 @@
 include "root" {
   path   = find_in_parent_folders("root.hcl")
-  expose = true
+  expose = true # Expose local variables
 }
 
 locals {
@@ -25,7 +25,7 @@ remote_state {
     bucket       = dependency.backend.outputs.bootstrap_bucket_name
     key          = "bootstrap/env-backends/terraform.tfstate"
     region       = local.aws_region
-    use_lockfile = true
+    use_lockfile = true # Prevent concurrent operations
     encrypt      = true
   }
 }
