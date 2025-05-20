@@ -1,0 +1,4 @@
+bucket       = "scottylabs-tofu-state-bootstrap-340752840444"
+encrypt      = true
+region       = "us-east-2"
+use_lockfile = true

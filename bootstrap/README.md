@@ -63,3 +63,5 @@ tofu apply
 # Note the environment bucket names from the output
 tofu output state_bucket_names
 ```
+
+4. Using those bucket names, create the partial backend configuration files as in `config/`.

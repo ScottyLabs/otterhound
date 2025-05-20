@@ -1,5 +1,8 @@
 {
     "files.readonlyInclude": {
         ".terraform.lock.hcl": true,
+    },
+    "files.associations": {
+        "*.tfbackend": "terraform"
     }
 }
