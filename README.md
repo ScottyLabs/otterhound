@@ -44,21 +44,39 @@ Each of the following set of instructions assume you are working from the root o
 
 This uses the `keycloak` service and the `dev` environment as an example. Change these values to your needs.
 
+Firstly, ensure you're working in the right account:
+
 ```bash
-# Ensure you're working in the right account
 export AWS_PROFILE=scottylabs-dev # (or staging, prod)
+```
 
-# Create the directory before initializing
-mkdir services/keycloak
+Make sure to include `key` in your backend configuration (preferably in `main.tf`):
 
-# Initialize OpenTofu (only needed once per directory)
+```terraform
+terraform {
+  backend "s3" {
+    key = "services/keycloak/terraform.tfstate"
+  }
+}
+```
+
+Because we are using partial backend configuration, we only need to specify the key. Additional information (`region`, `bucket`, etc.) comes from an environment-specific backend configuration file in `config/`.
+
+Any time your backend configuration is modified (which it will have after adding `key`), you'll need to reinitialize OpenTofu:
+
+```bash
 ./scripts/init-service.sh keycloak dev
+```
 
-cd services/keycloak
+The script will take care of setting `-backend-config` for you. However, when making any other changes, you need to do this yourself:
 
-# After making changes
-tofu plan
-tofu apply
+```bash
+tofu plan -backend-config="../../config/dev.tfbackend"
+tofu apply -backend-config="../../config/dev.tfbackend"
+
+# Make sure you have the correct AWS_PROFILE set!
+# I.e. AWS_PROFILE=scottylabs-$env should match $env.tfbackend,
+# where $env is one of dev, staging, prod
 ```
 
 ### Common commands
@@ -67,8 +85,7 @@ tofu apply
 # Refresh SSO credentials (when expired)
 aws sso login --profile scottylabs
 
-# Check current AWS identity
-# (if this fails, run the above command first)
+# Check current AWS identity (if this fails, run the above command first)
 aws sts get-caller-identity
 
 # View outputs from any module
