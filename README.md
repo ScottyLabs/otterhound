@@ -54,6 +54,8 @@ mkdir services/keycloak
 # Initialize OpenTofu (only needed once per directory)
 ./scripts/init-service.sh keycloak dev
 
+cd services/keycloak
+
 # After making changes
 tofu plan
 tofu apply
