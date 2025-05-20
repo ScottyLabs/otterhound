@@ -53,6 +53,4 @@ echo "Using account $AWS_PROFILE ($ACCOUNT_ID)"
 
 # Initialize the service
 cd "services/$SERVICE"
-tofu init \
-  -backend-config="../../config/$ENV.tfbackend" \
-  -backend-config="key=services/$SERVICE/terraform.tfstate"
+tofu init -backend-config="../../config/$ENV.tfbackend"
