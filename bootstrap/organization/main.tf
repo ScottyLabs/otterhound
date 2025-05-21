@@ -1,6 +1,7 @@
 terraform {
-  # Values provided during init
-  backend "s3" {}
+  backend "s3" {
+    key = "bootstrap/organization/terraform.tfstate"
+  }
 
   required_providers {
     aws = {
