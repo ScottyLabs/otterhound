@@ -68,11 +68,11 @@ Any time your backend configuration is modified (which it will have after adding
 ./scripts/init-service.sh keycloak dev
 ```
 
-The script will take care of setting `-backend-config` for you. However, when making any other changes, you need to do this yourself:
+The script will take care of setting `-backend-config` for you. When making any other changes, use the respective script:
 
 ```bash
-tofu plan -backend-config="../../config/dev.tfbackend"
-tofu apply -backend-config="../../config/dev.tfbackend"
+./scripts/plan-service.sh keycloak dev # for "tofu plan"
+./scripts/apply-service.sh keycloak dev # for "tofu apply"
 
 # Make sure you have the correct AWS_PROFILE set!
 # I.e. AWS_PROFILE=scottylabs-$env should match $env.tfbackend,

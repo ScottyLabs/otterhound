@@ -6,6 +6,6 @@ source "$(dirname "$0")/_common.sh"
 # Validate arguments
 validate_args "$1" "$2"
 
-# Initialize the service
+# Plan the service changes
 change_to_service_dir "$1"
-tofu init -backend-config="$(get_backend_config "$2")"
+tofu plan -var-file="$(get_vars_file "$2")"
