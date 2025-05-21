@@ -29,12 +29,9 @@ done
 echo "
 Profiles have been configured! To use an environment:
 
-1. Make sure you're logged into SSO:
-   aws sso login --profile scottylabs
+1. Make sure you're logged into SSO:\n   aws sso login --profile scottylabs
 
-2. Set the environment profile:
-   export AWS_PROFILE=scottylabs-dev  # or staging, prod
+2. Set the environment profile:\n   export AWS_PROFILE=scottylabs-dev  # or staging, prod
 
-3. Verify you're in the correct account:
-   aws sts get-caller-identity
+3. Verify you're in the correct account:\n   aws sts get-caller-identity
 "
