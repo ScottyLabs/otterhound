@@ -25,15 +25,7 @@ if [ ! -d "services/$SERVICE" ]; then
     exit 1
 fi
 
-# Get the account IDs from the organization output
-cd bootstrap/organization
-ACCOUNT_IDS=$(AWS_PROFILE=scottylabs tofu output -json account_ids)
-cd ../..
-
-# Get the expected account ID for the environment
-EXPECTED_ACCOUNT=$(echo "$ACCOUNT_IDS" | jq -r ".$ENV")
-
-# Verify AWS credentials are working and we're in the correct account
+# Verify AWS credentials are working
 CALLER_IDENTITY=$(aws sts get-caller-identity)
 if [ $? -ne 0 ]; then
     echo "Error: AWS credentials are not working. Please check your AWS profile configuration."
@@ -42,6 +34,19 @@ fi
 
 # Extract account ID from caller identity
 ACCOUNT_ID=$(echo "$CALLER_IDENTITY" | jq -r '.Account')
+
+# Verify we're in the correct account for the environment
+case $ENV in
+    dev)
+        EXPECTED_ACCOUNT="485133187678"
+        ;;
+    staging)
+        EXPECTED_ACCOUNT="516241722859"
+        ;;
+    prod)
+        EXPECTED_ACCOUNT="927215580100"
+        ;;
+esac
 
 if [ "$ACCOUNT_ID" != "$EXPECTED_ACCOUNT" ]; then
     echo "Error: You are authenticated as account $ACCOUNT_ID, but expected account $EXPECTED_ACCOUNT for $ENV environment"
