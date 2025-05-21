@@ -35,19 +35,16 @@ fi
 # Extract account ID from caller identity
 ACCOUNT_ID=$(echo "$CALLER_IDENTITY" | jq -r '.Account')
 
-# Verify we're in the correct account for the environment
-case $ENV in
-    dev)
-        EXPECTED_ACCOUNT="485133187678"
-        ;;
-    staging)
-        EXPECTED_ACCOUNT="516241722859"
-        ;;
-    prod)
-        EXPECTED_ACCOUNT="927215580100"
-        ;;
-esac
+# Extract expected account ID from the tfbackend file
+TFBACKEND_PATH="config/$ENV.tfbackend"
+if [ ! -f "$TFBACKEND_PATH" ]; then
+    echo "Error: tfbackend config file not found: $TFBACKEND_PATH"
+    exit 1
+fi
 
+EXPECTED_ACCOUNT=$(grep 'bucket' "$TFBACKEND_PATH" | grep -oE '[0-9]{12}')
+
+# Verify we're in the correct account for the environment
 if [ "$ACCOUNT_ID" != "$EXPECTED_ACCOUNT" ]; then
     echo "Error: You are authenticated as account $ACCOUNT_ID, but expected account $EXPECTED_ACCOUNT for $ENV environment"
     echo "Please ensure you're using the correct AWS profile for the $ENV environment"

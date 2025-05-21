@@ -4,10 +4,11 @@
 aws sso login --profile scottylabs
 export AWS_PROFILE=scottylabs
 
-# Get the account IDs from the organization output
-cd bootstrap/organization
-ACCOUNT_IDS=$(tofu output -json account_ids)
-cd ../..
+# Function to extract the account ID from the tfbackend file
+get_account_id() {
+  local env=$1
+  grep 'bucket' "config/$env.tfbackend" | grep -oE '[0-9]{12}'
+}
 
 # Function to setup a profile
 setup_profile() {
@@ -21,12 +22,18 @@ setup_profile() {
   aws configure set source_profile scottylabs --profile "scottylabs-$env"
 }
 
-# Setup each environment
+# Setup each environment using account ID from tfbackend file
 for env in dev staging prod; do
-  setup_profile "$env" "$(echo "$ACCOUNT_IDS" | jq -r ".$env")"
+  account_id=$(get_account_id "$env")
+  if [ -z "$account_id" ]; then
+    echo "Error: Could not extract account ID for environment: $env"
+    exit 1
+  fi
+
+  setup_profile "$env" "$account_id"
 done
 
-echo "
+echo -e "
 Profiles have been configured! To use an environment:
 
 1. Make sure you're logged into SSO:\n   aws sso login --profile scottylabs
