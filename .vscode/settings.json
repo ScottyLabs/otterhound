@@ -1,6 +1,15 @@
 {
+    "[terraform]": {
+        "editor.defaultFormatter": "hashicorp.terraform"
+    },
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": "explicit",
+        "source.fixAll": "explicit"
+    },
+    "files.insertFinalNewline": true,
     "files.readonlyInclude": {
-        ".terraform.lock.hcl": true,
+        ".terraform.lock.hcl": true
     },
     "files.associations": {
         "*.tfbackend": "terraform"
