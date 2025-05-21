@@ -2,6 +2,10 @@ terraform {
   # We need this for S3-native state locking
   required_version = ">= 1.10.0"
 
+  backend "s3" {
+    key = "bootstrap/backend/terraform.tfstate"
+  }
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
