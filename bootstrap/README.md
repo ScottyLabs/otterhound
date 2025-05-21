@@ -1,6 +1,6 @@
 # Bootstrap
 
-This project uses remote state with OpenTofu 1.10.0's support for S3 native locking (no DynamoDB required).
+These steps assume you are in the `bootstrap/` directory, not the repository root.
 
 `backend/` uses local state to create the management S3 bucket. This bucket stores the state for `organization/` and the individual S3 buckets for each environment account.
 
@@ -8,52 +8,73 @@ This project uses remote state with OpenTofu 1.10.0's support for S3 native lock
 
 Only the **first person to set up the repository** needs to follow these steps.
 
-1. Create the management state bucket:
+1. Make sure you are on the management profile:
+
+```bash
+export AWS_PROFILE=scottylabs
+```
+
+2. Comment out the `backend "s3"` block in `backend/main.tf`. This directory provisions the management state bucket, and we need to create it before we can have it contain its own state.
+
+3. Create the management state bucket, which will initially store its state locally:
 
 ```bash
 cd backend
 
 tofu init
 tofu apply
+
+# Save the management bucket name from the output
+MANAGEMENT_BUCKET=$(tofu output -raw bootstrap_bucket_name)
 ```
 
-2. Configure organization with remote state:
+4. Using that bucket name, create `../../config/management.tfbackend` (assuming you are still in the `backend/` directory):
+
+```terraform
+bucket       = "<management-bucket-name>"
+encrypt      = true
+region       = "us-east-2"
+use_lockfile = true
+```
+
+5. Uncomment the section from before, and migrate to remote state stored in the management bucket:
+
+```bash
+tofu init -backend-config="../../config/management.tfbackend"
+
+# When prompted, type "yes" to migrate state to S3
+
+# Delete the original local state files
+rm terraform.tfstate
+rm terraform.tfstate.backup
+```
+
+6. Configure organization with remote state:
 
 ```bash
 cd ../organization
 
 # Initialize with management state bucket
-MANAGEMENT_BUCKET=$(cd ../backend && tofu output -raw bootstrap_bucket_name)
-tofu init \
-  -backend-config="bucket=${MANAGEMENT_BUCKET}" \
-  -backend-config="key=bootstrap/organization/terraform.tfstate" \
-  -backend-config="region=us-east-2" \
-  -backend-config="use_lockfile=true" \
-  -backend-config="encrypt=true"
-
-# When prompted, type "yes" to migrate state to S3
+tofu init -backend-config="../../config/management.tfbackend"
 
 # Create the organization and environment accounts
 tofu plan
 tofu apply
+
+# Save the account IDs from the output
+ACCOUNT_IDS=$(tofu output -json account_ids)
 ```
 
-3. Create the environment state buckets:
+7. Create the environment state buckets, again with remote state:
 
 ```bash
 cd ../env-backends
 
 # Initialize with management state bucket
-tofu init \
-  -backend-config="bucket=${MANAGEMENT_BUCKET}" \
-  -backend-config="key=bootstrap/env-backends/terraform.tfstate" \
-  -backend-config="region=us-east-2" \
-  -backend-config="use_lockfile=true" \
-  -backend-config="encrypt=true"
+tofu init -backend-config="../../config/management.tfbackend"
 
-# Set the account_ids variable
-ACCOUNT_IDS=$(cd ../organization && tofu output -json account_ids)
-echo "$ACCOUNT_IDS" | jq '{ account_ids: . }' > ../env-backends/terraform.tfvars.json
+# Set the account_ids variable (see env-backends/variables.tf)
+echo "$ACCOUNT_IDS" | jq '{ account_ids: . }' > ./terraform.tfvars.json
 
 # Create state buckets in each environment account
 tofu plan
@@ -63,4 +84,6 @@ tofu apply
 tofu output state_bucket_names
 ```
 
-4. Using those bucket names, create the partial backend configuration files as in `config/`.
+8. Using those bucket names, create partial backend configuration files for `dev`, `staging`, and `prod` in `../../config`. These should be identical to `management.tfbackend` aside from the `bucket` key.
+
+9. Write this guide (kidding)
