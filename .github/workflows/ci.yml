@@ -2,13 +2,9 @@ name: CI
 
 on:
   push:
-    paths:
-      - "**.tf"
-      - ".github/scripts/validate.sh"
+    branches:
+      - main
   pull_request:
-    paths:
-      - "**.tf"
-      - ".github/scripts/validate.sh"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
