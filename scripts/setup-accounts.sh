@@ -26,7 +26,7 @@ for env in dev staging prod; do
   setup_profile "$env" "$(echo "$ACCOUNT_IDS" | jq -r ".$env")"
 done
 
-echo "
+echo -e "
 Profiles have been configured! To use an environment:
 
 1. Make sure you're logged into SSO:\n   aws sso login --profile scottylabs
