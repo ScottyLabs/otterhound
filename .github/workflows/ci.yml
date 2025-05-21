@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    paths:
+      - "**.tf"
+      - ".github/scripts/validate.sh"
+  pull_request:
+    paths:
+      - "**.tf"
+      - ".github/scripts/validate.sh"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-editorconfig:
+    name: Check EditorConfig Compliance
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install EditorConfig Checker
+        uses: taiki-e/install-action@v2
+        with:
+          tool: editorconfig-checker
+          fallback: none
+
+      - name: Check EditorConfig Compliance
+        run: editorconfig-checker --exclude LICENSE
+
+  check-opentofu:
+    name: Check OpenTofu
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read OpenTofu version
+        id: read_version
+        run: echo "version=$(cat .opentofu-version)" >> $GITHUB_OUTPUT
+
+      - name: Set up OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: ${{ steps.read_version.outputs.version }}
+
+      - name: Run validation script
+        run: .github/scripts/validate.sh
+
+      - name: Check formatting
+        run: tofu fmt -recursive -check
