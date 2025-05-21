@@ -97,3 +97,7 @@ tofu fmt -recursive
 # Validate configuration
 tofu validate
 ```
+
+## License
+
+This project is licensed under `Apache-2.0`.
