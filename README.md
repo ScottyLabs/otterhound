@@ -32,7 +32,7 @@ Profile name: scottylabs
 New team members should:
 
 1. Clone this repository.
-2. Complete the [Setup][#setup] section above.
+2. Complete the [Setup](#setup) section above.
 3. Apply the [Working with Infrastructure](#working-with-infrastructure) section to any service they want to work with.
 
 > [!NOTE]
