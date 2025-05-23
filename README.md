@@ -68,7 +68,7 @@ Any time your backend configuration is modified (which it will have after adding
 ./scripts/init-service.sh keycloak dev
 ```
 
-The script will take care of setting `-backend-config` for you. When making any other changes, use the respective script:
+The script will take care of setting `-backend-config` for you. When making any other changes, use the respective script, which will set `-var-file` for you:
 
 ```bash
 ./scripts/plan-service.sh keycloak dev # for "tofu plan"
