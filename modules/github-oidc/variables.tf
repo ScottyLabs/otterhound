@@ -12,7 +12,7 @@ variable "github_repository_conditions" {
   description = "List of GitHub repository conditions for OIDC trust"
   type        = list(string)
   # The "sub" claim format is: "repo:<owner>/<repo>:ref:refs/heads/<branch>"
-  default     = ["repo:ScottyLabs/infrastructure:*"]
+  default = ["repo:ScottyLabs/infrastructure:*"]
 }
 
 variable "additional_policy_json" {

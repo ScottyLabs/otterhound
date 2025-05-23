@@ -15,9 +15,9 @@ locals {
   role_name = "GitHubActions-OpenTofu-${title(var.environment)}"
 
   # Auto-discover bucket name using environment account's ID
-  account_id = data.aws_caller_identity.current.account_id
+  account_id        = data.aws_caller_identity.current.account_id
   state_bucket_name = "scottylabs-tofu-state-${var.environment}-${local.account_id}"
-  state_bucket_arn = "arn:aws:s3:::${local.state_bucket_name}"
+  state_bucket_arn  = "arn:aws:s3:::${local.state_bucket_name}"
 
   # Common tags for all resources
   tags = {
@@ -30,9 +30,9 @@ locals {
 
 # GitHub OIDC Provider
 resource "aws_iam_openid_connect_provider" "github" {
-  url = "https://token.actions.githubusercontent.com"
+  url            = "https://token.actions.githubusercontent.com"
   client_id_list = ["sts.amazonaws.com"]
-  tags = local.tags
+  tags           = local.tags
 }
 
 # IAM role for GitHub Actions
