@@ -31,9 +31,9 @@ Profile name: scottylabs
 
 New team members should:
 
-1. Clone this repository
-2. Complete the **Setup** section above
-3. Apply the "Working with Infrastructure" section to any service they want to work with
+1. Clone this repository.
+2. Complete the [Setup](#setup) section above.
+3. Apply the [Working with Infrastructure](#working-with-infrastructure) section to any service they want to work with.
 
 > [!NOTE]
 > The following commands assume that you have the environment variable `AWS_PROFILE` set. It is recommended to set it once at the start of your session: `export AWS_PROFILE=scottylabs-dev` (or staging, prod).
