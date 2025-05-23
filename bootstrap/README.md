@@ -86,4 +86,25 @@ tofu output state_bucket_names
 
 8. Using those bucket names, create partial backend configuration files for `dev`, `staging`, and `prod` in `../../config`. These should be identical to `management.tfbackend` aside from the `bucket` key.
 
-9. Write this guide (kidding)
+9. Set up the GitHub Actions deployment infrastructure for this repository, i.e. the OIDC provider, IAM role, and associated policies:
+
+```bash
+cd ../github-oidc
+
+# Initialize with management state bucket
+tofu init -backend-config="../../config/management.tfbackend"
+
+# Set the management_bucket_name and aws_region variables
+echo "management_bucket_name = \"${MANAGEMENT_BUCKET}\"\naws_region = \"us-east-2\"" > terraform.tfvars
+
+# Review the planned changes
+tofu plan
+tofu apply
+
+# Note the "AWS_ROLE_TO_ASSUME_*" values from the output
+tofu output github_secrets_format
+```
+
+10. Create `dev`, `staging`, and `prod` [GitHub Environments](https://docs.github.com/en/actions/managing-workflow-runs-and-deployments/managing-deployments/managing-environments-for-deployment) for the repository. In each, set the `AWS_ROLE_TO_ASSUME` to the corresponding `AWS_ROLE_TO_ASSUME_$env` variable from the previous step.
+
+11. Write this guide (kidding)
