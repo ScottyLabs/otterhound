@@ -6,7 +6,9 @@
 set -e
 
 get_all_services() {
-  find services -maxdepth 1 -type d ! -path services | cut -d/ -f2 | jq -R -s -c 'split("\n")[:-1]'
+  local services
+  services=$(find services -maxdepth 1 -type d ! -path services | cut -d/ -f2 | jq -R -s -c 'split("\n")[:-1]')
+  echo "$services"
 }
 
 # Convert comma-separated string to JSON array
@@ -47,7 +49,7 @@ build_manual_matrix() {
     done
   done
 
-  echo "$matrix"
+  echo "$matrix" | jq -c '.'
 }
 
 build_automatic_matrix() {
@@ -74,7 +76,7 @@ build_automatic_matrix() {
     done
   done
 
-  echo "$matrix"
+  echo "$matrix" | jq -c '.'
 }
 
 main() {
@@ -86,6 +88,7 @@ main() {
   # Get all available services from filesystem
   local all_services
   all_services=$(get_all_services)
+  echo "Found services: $all_services" >&2
 
   # Auto-detect mode based on whether manual inputs are provided
   if [ -n "$manual_services" ] || [ -n "$manual_environments" ]; then
@@ -95,6 +98,10 @@ main() {
 
     services=$(parse_comma_separated "$manual_services")
     environments=$(parse_comma_separated "$manual_environments")
+
+    echo "Parsed services: $services" >&2
+    echo "Parsed environments: $environments" >&2
+
     matrix=$(build_manual_matrix "$services" "$environments" "$all_services")
 
     echo "$matrix"
@@ -105,6 +112,10 @@ main() {
 
     changed_services=$(parse_changed_services "$changed_services_json")
     changed_environments=$(parse_changed_environments "$changed_environments_json")
+
+    echo "Changed services: $changed_services" >&2
+    echo "Changed environments: $changed_environments" >&2
+
     matrix=$(build_automatic_matrix "$changed_services" "$changed_environments" "$all_services")
 
     echo "$matrix"
