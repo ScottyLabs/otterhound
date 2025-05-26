@@ -136,4 +136,4 @@ jobs:
 
       - name: Apply OpenTofu
         working-directory: services/${{ matrix.service }}
-        run: tofu apply tfplan
+        run: tofu apply -auto-approve tfplan
