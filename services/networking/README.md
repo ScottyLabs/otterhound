@@ -37,20 +37,20 @@ VPC: 10.0.0.0/16 (65,536 IPs)
 There are a few common security groups meant for other services to use:
 
 * `alb_security_group_id` for Application Load Balancers.
-** Inbound: HTTP (80) and HTTPS (443) from anywhere
-** Outbound: To private subnets only
+  * Inbound: HTTP (80) and HTTPS (443) from anywhere
+  * Outbound: To private subnets only
 
 * `apps_security_group_id` for ECS containers, EC2 instances, and appliaction servers.
-** Inbound: From ALBs, inter-app communication
-** Outbound: Full internet access
+  * Inbound: From ALBs, inter-app communication
+  * Outbound: Full internet access
 
 * `database_security_group_id` for RDS instances and Redis.
-** Inbound: PostgreSQL (`5432`), Redis (`6379`) from apps
-** Outbound: None
+  * Inbound: PostgreSQL (`5432`), Redis (`6379`) from apps
+  * Outbound: None
 
 * `lambda_security_group_id` for Lambda functions that need VPC access.
-** Inbound: None
-** Outbound: Full internet access + database access
+  * Inbound: None
+  * Outbound: Full internet access + database access
 
 ## Usage
 
