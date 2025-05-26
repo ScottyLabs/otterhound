@@ -62,17 +62,36 @@ Other services can reference this networking infrastructure via remote state:
 
 ```terraform
 # services/example-service/main.tf
-data "terraform_remote_state" "networking" {
-  backend = "s3"
-  config = {
-    bucket = "scottylabs-tofu-state-${var.environment}-${data.aws_caller_identity.current.account_id}"
-    key    = "services/networking/terraform.tfstate"
-    region = "us-east-2"
+data "aws_vpc" "main" {
+  tags = {
+    Environment = var.environment
+    Service     = "networking"
+    ManagedBy   = "opentofu"
   }
 }
 
-# Use the VPC and subnets
-resource "aws_security_group" "example" {
-  vpc_id = data.terraform_remote_state.networking.outputs.vpc_id
+data "aws_subnets" "private" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.main.id]
+  }
+  tags = {
+    Type = "private"
+  }
+}
+
+# Example: Security group
+data "aws_security_group" "apps" {
+  name   = "scottylabs-${var.environment}-apps"
+  vpc_id = data.aws_vpc.main.id
+}
+
+# Example: ECS service using private subnets
+resource "aws_ecs_service" "example" {
+  # when using the awsvpc network mode
+  network_configuration {
+    subnets = data.aws_subnets.private.ids
+    security_groups = [data.aws_security_group.apps.id]
+  }
 }
 ```
