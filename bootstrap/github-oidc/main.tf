@@ -24,9 +24,25 @@ data "terraform_remote_state" "env_backends" {
   }
 }
 
-# Extract the backend configurations for each environment
 locals {
+  # Extract the backend configurations for each environment
   backend_configs = data.terraform_remote_state.env_backends.outputs.backend_configs
+
+  # Allow additional permissions
+  additional_policy_json = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          # Used for services/networking
+          "ec2:DescribeAvailabilityZones",
+          "ec2:CreateVpc"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
 }
 
 # Configure providers for each environment account
@@ -68,20 +84,7 @@ module "github_oidc_dev" {
   # Used to generate the IAM role name and the state bucket name
   environment = "dev"
 
-  # Allow additional permissions
-  additional_policy_json = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          # Used for services/networking
-          "ec2:DescribeAvailabilityZones"
-        ]
-        Resource = "*"
-      }
-    ]
-  })
+  additional_policy_json = local.additional_policy_json
 }
 
 module "github_oidc_staging" {
@@ -93,19 +96,7 @@ module "github_oidc_staging" {
 
   environment = "staging"
 
-  additional_policy_json = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          # Used for services/networking
-          "ec2:DescribeAvailabilityZones"
-        ]
-        Resource = "*"
-      }
-    ]
-  })
+  additional_policy_json = local.additional_policy_json
 }
 
 module "github_oidc_prod" {
@@ -117,17 +108,5 @@ module "github_oidc_prod" {
 
   environment = "prod"
 
-  additional_policy_json = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          # Used for services/networking
-          "ec2:DescribeAvailabilityZones"
-        ]
-        Resource = "*"
-      }
-    ]
-  })
+  additional_policy_json = local.additional_policy_json
 }

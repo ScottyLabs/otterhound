@@ -21,12 +21,12 @@ parse_comma_separated() {
   fi
 }
 
-# Extract service names from changed service paths (services/foo → foo)
+# Extract service names from changed service paths (services/foo -> foo)
 parse_changed_services() {
   echo "$1" | jq -c 'map(split("/")[1]) // []'
 }
 
-# Extract environment names from changed environment files (environments/dev.tfvars → dev)
+# Extract environment names from changed environment files (environments/dev.tfvars -> dev)
 parse_changed_environments() {
   echo "$1" | jq -c 'map(split("/")[1] | split(".")[0]) // []'
 }
