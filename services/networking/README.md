@@ -30,7 +30,7 @@ VPC: 10.0.0.0/16 (65,536 IPs)
 │   ├── Public:   10.0.0.0/24   (256 IPs) -> Internet Gateway
 │   ├── Private:  10.0.10.0/24  (256 IPs) -> NAT Gateway
 │   └── Database: 10.0.20.0/24  (256 IPs) -> No internet
-└── AZ: us-east-2b  
+└── AZ: us-east-2b
     ├── Public:   10.0.1.0/24   (256 IPs) -> Internet Gateway
     ├── Private:  10.0.11.0/24  (256 IPs) -> NAT Gateway (in AZ A)
     └── Database: 10.0.21.0/24  (256 IPs) -> No internet
