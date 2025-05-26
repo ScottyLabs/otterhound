@@ -26,6 +26,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        # Don't need to specify fetch depth, changed-files will fetch as required
 
       - name: Get changed services
         id: changed-services
