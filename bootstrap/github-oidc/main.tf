@@ -68,8 +68,15 @@ locals {
           "ec2:AuthorizeSecurityGroupIngress",
           "ec2:AuthorizeSecurityGroupEgress",
           "ec2:CreateNatGateway",
+          "ec2:DescribeSecurityGroupRules",
+          "ec2:DescribeNatGateways",
+          "ec2:RevokeSecurityGroupIngress",
+          "ec2:DeleteNatGateway",
           "rds:CreateDBSubnetGroup",
-          "rds:AddTagsToResource"
+          "rds:AddTagsToResource",
+          "rds:DescribeDBSubnetGroups",
+          "rds:ListTagsForResource",
+          "rds:DeleteDBSubnetGroup"
         ]
         Resource = "*"
       }
