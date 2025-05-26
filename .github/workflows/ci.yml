@@ -34,6 +34,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Get changed Terraform directories
+        id: changed-terraform
+        uses: tj-actions/changed-files@v46
+        with:
+          files: '**/*.tf'
+          dir_names: true
+          dir_names_max_depth: 10
+          dir_names_exclude_current_dir: true
+          json: true
+
       - name: Read OpenTofu version
         id: read_version
         run: echo "version=$(cat .opentofu-version)" >> $GITHUB_OUTPUT
@@ -44,7 +54,14 @@ jobs:
           tofu_version: ${{ steps.read_version.outputs.version }}
 
       - name: Run validation script
-        run: .github/scripts/validate.sh
+        if: steps.changed-terraform.outputs.any_changed == 'true'
+        run: |
+          echo '${{ steps.changed-terraform.outputs.all_changed_files }}' | \
+          jq -r '.[]' | .github/scripts/validate.sh
+
+      - name: Skip validation message
+        if: steps.changed-terraform.outputs.any_changed == 'false'
+        run: echo "No Terraform files changed, skipping validation"
 
       - name: Check formatting
         run: tofu fmt -recursive -check
