@@ -37,7 +37,39 @@ locals {
         Action = [
           # Used for services/networking
           "ec2:DescribeAvailabilityZones",
-          "ec2:CreateVpc"
+          "ec2:CreateVpc",
+          "ec2:CreateTags",
+          "ec2:DescribeVpcs",
+          "ec2:DescribeVpcAttribute",
+          "ec2:DeleteVpc",
+          "ec2:ModifyVpcAttribute",
+          "ec2:CreateInternetGateway",
+          "ec2:CreateSubnet",
+          "ec2:CreateRouteTable",
+          "ec2:CreateSecurityGroup",
+          "ec2:AttachInternetGateway",
+          "ec2:DescribeSubnets",
+          "ec2:DescribeRouteTables",
+          "ec2:DescribeSecurityGroups",
+          "ec2:DescribeInternetGateways",
+          "ec2:DeleteRouteTable",
+          "ec2:DescribeNetworkInterfaces",
+          "ec2:DeleteInternetGateway",
+          "ec2:DeleteSubnet",
+          "ec2:DeleteSecurityGroup",
+          "ec2:AllocateAddress",
+          "ec2:CreateRoute",
+          "ec2:ModifySubnetAttribute",
+          "ec2:DescribeAddresses",
+          "ec2:AssociateRouteTable",
+          "ec2:RevokeSecurityGroupEgress",
+          "ec2:DescribeAddressesAttribute",
+          "ec2:ReleaseAddress",
+          "ec2:AuthorizeSecurityGroupIngress",
+          "ec2:AuthorizeSecurityGroupEgress",
+          "ec2:CreateNatGateway",
+          "rds:CreateDBSubnetGroup",
+          "rds:AddTagsToResource"
         ]
         Resource = "*"
       }

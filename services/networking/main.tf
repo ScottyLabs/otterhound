@@ -29,6 +29,9 @@ locals {
   used_az_count      = min(var.az_count, length(data.aws_availability_zones.available.names))
   availability_zones = slice(data.aws_availability_zones.available.names, 0, local.used_az_count)
 
+  # Use a single NAT Gateway if specified, otherwise use one per AZ
+  nat_gateway_count = var.single_nat_gateway ? 1 : local.used_az_count
+
   # Common tags for all resources
   tags = {
     Environment = var.environment
@@ -59,7 +62,7 @@ resource "aws_internet_gateway" "main" {
 
 # Public subnets (for ALBs, NAT Gateways, Bastion hosts, etc.)
 resource "aws_subnet" "public" {
-  count = length(local.availability_zones)
+  count = local.used_az_count
 
   vpc_id            = aws_vpc.main.id
   cidr_block        = cidrsubnet(var.vpc_cidr, 8, count.index) # Creates 10.x.0.0/24, 10.x.1.0/24, 10.x.2.0/24
@@ -77,7 +80,7 @@ resource "aws_subnet" "public" {
 
 # Private Subnets (for ECS, Lambda, application servers)
 resource "aws_subnet" "private" {
-  count = length(local.availability_zones)
+  count = local.used_az_count
 
   vpc_id            = aws_vpc.main.id
   cidr_block        = cidrsubnet(var.vpc_cidr, 8, count.index + 10) # Creates 10.x.10.0/24, 10.x.11.0/24, 10.x.12.0/24
@@ -91,7 +94,7 @@ resource "aws_subnet" "private" {
 
 # Database Subnets (for RDS, etc.)
 resource "aws_subnet" "database" {
-  count = length(local.availability_zones)
+  count = local.used_az_count
 
   vpc_id            = aws_vpc.main.id
   cidr_block        = cidrsubnet(var.vpc_cidr, 8, count.index + 20) # Creates 10.x.20.0/24, 10.x.21.0/24, 10.x.22.0/24
@@ -105,8 +108,8 @@ resource "aws_subnet" "database" {
 
 # Elastic IPs for NAT Gateways
 resource "aws_eip" "nat" {
-  # One EIP per availability zone (per NAT gateway)
-  count = length(local.availability_zones)
+  # One EIP per NAT gateway
+  count = local.nat_gateway_count
 
   # The EIP will be used within the VPC (EC2-VPC platform)
   domain = "vpc"
@@ -120,11 +123,12 @@ resource "aws_eip" "nat" {
 
 # NAT Gateways
 resource "aws_nat_gateway" "main" {
-  # One NAT gateway per availability zone
-  count = length(local.availability_zones)
+  count = local.nat_gateway_count
 
   allocation_id = aws_eip.nat[count.index].id
-  subnet_id     = aws_subnet.public[count.index].id
+
+  # If single NAT, place in the first subnet, otherwise place in each AZ's subnet
+  subnet_id = aws_subnet.public[var.single_nat_gateway ? 0 : count.index].id
 
   # NAT gateway needs the internet gateway to route traffic to the internet
   depends_on = [aws_internet_gateway.main]
@@ -160,15 +164,15 @@ resource "aws_route_table_association" "public" {
 
 # Private Route Tables
 resource "aws_route_table" "private" {
-  count = length(local.availability_zones)
+  count = local.nat_gateway_count
 
   vpc_id = aws_vpc.main.id
 
   # Receive traffic from public resources, but not from the internet
-  # Send outbound traffic to internet via NAT gateway
+  # Send outbound traffic to internet via NAT gateway by going to it first
   route {
     cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.main[count.index].id # Go to NAT gateway first
+    nat_gateway_id = aws_nat_gateway.main[var.single_nat_gateway ? 0 : count.index].id
   }
 
   tags = merge(local.tags, {
@@ -181,7 +185,7 @@ resource "aws_route_table_association" "private" {
   count = length(aws_subnet.private)
 
   subnet_id      = aws_subnet.private[count.index].id
-  route_table_id = aws_route_table.private[count.index].id
+  route_table_id = aws_route_table.private[var.single_nat_gateway ? 0 : count.index].id
 }
 
 # Database Route Table
