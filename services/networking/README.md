@@ -10,7 +10,7 @@ Creates a single VPC per environment, with:
 * Private subnets (`10.x.10-12.0/24`) intended for application containers, Lambda functions, and other private resources.
 * Database subnets (`10.x.20-22.0/24`) intended for RDS, Redis, and other isolated resources.
 
-For cost purposes, we opt for a single availability zone (AZ) per VPC. We have per-AZ NAT gateways, i.e. one per VPC.
+Despite having 2 availability zones (AZs) for dev/staging and 3 AZs for prod, we opt to have these AZs share a single NAT gateway per environment. This is to satisfy the RDS DB subnet group's two-AZ requirements while reducing NAT-related costs.
 
 This service also sets up the internet gateway, route tables, and security groups.
 
@@ -26,10 +26,14 @@ The following is an example subnet layout for `dev`:
 
 ```
 VPC: 10.0.0.0/16 (65,536 IPs)
-└── AZ: us-east-2a
-    ├── Public:   10.0.0.0/24   (256 IPs) -> Internet Gateway
-    ├── Private:  10.0.10.0/24  (256 IPs) -> NAT Gateway
-    └── Database: 10.0.20.0/24  (256 IPs) -> No internet
+├── AZ: us-east-2a
+│   ├── Public:   10.0.0.0/24   (256 IPs) -> Internet Gateway
+│   ├── Private:  10.0.10.0/24  (256 IPs) -> NAT Gateway
+│   └── Database: 10.0.20.0/24  (256 IPs) -> No internet
+└── AZ: us-east-2b  
+    ├── Public:   10.0.1.0/24   (256 IPs) -> Internet Gateway
+    ├── Private:  10.0.11.0/24  (256 IPs) -> NAT Gateway (in AZ A)
+    └── Database: 10.0.21.0/24  (256 IPs) -> No internet
 ```
 
 ## Security Groups

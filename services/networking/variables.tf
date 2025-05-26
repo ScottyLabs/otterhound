@@ -28,6 +28,12 @@ variable "az_count" {
   }
 }
 
+variable "single_nat_gateway" {
+  description = "Use a single NAT Gateway (true) or one per AZ (false)"
+  type        = bool
+  default     = true
+}
+
 variable "aws_region" {
   description = "AWS region for resources"
   type        = string
