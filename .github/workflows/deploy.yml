@@ -43,7 +43,7 @@ jobs:
         id: changes
         run: |
           if [ "${{ steps.changed-services.outputs.any_changed }}" = "true" ]; then
-            SERVICES=$(echo '${{ steps.changed-services.outputs.all_changed_files }}' | jq -c 'map(split("/")[1])')
+            SERVICES=$(echo '${{ toJSON(steps.changed-services.outputs.all_changed_files) }}' | jq -c 'map(split("/")[1])')
             echo "services=$SERVICES" >> $GITHUB_OUTPUT
           else
             echo "services=[]" >> $GITHUB_OUTPUT
