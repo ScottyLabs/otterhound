@@ -92,7 +92,7 @@ module "github_oidc_staging" {
   }
 
   environment = "staging"
-  
+
   additional_policy_json = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -116,7 +116,7 @@ module "github_oidc_prod" {
   }
 
   environment = "prod"
-  
+
   additional_policy_json = jsonencode({
     Version = "2012-10-17"
     Statement = [
