@@ -18,7 +18,7 @@ on:
         type: choice
         options:
         - "dev"
-        - "staging" 
+        - "staging"
         - "prod"
         - "dev,staging"
         - "dev,prod"
@@ -73,7 +73,6 @@ jobs:
             "${{ github.event.inputs.environments || '' }}" \
             "${{ steps.changed-services.outputs.all_changed_files || '[]' }}" \
             "${{ steps.changed-environments.outputs.all_changed_files || '[]' }}")
-          
           echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
 
   plan:
