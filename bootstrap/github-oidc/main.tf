@@ -35,7 +35,7 @@ locals {
       {
         Effect = "Allow"
         Action = [
-          # Used for services/networking
+          # Actions used for services/networking
           "ec2:DescribeAvailabilityZones",
           "ec2:CreateVpc",
           "ec2:CreateTags",
@@ -72,11 +72,39 @@ locals {
           "ec2:DescribeNatGateways",
           "ec2:RevokeSecurityGroupIngress",
           "ec2:DeleteNatGateway",
+
           "rds:CreateDBSubnetGroup",
           "rds:AddTagsToResource",
           "rds:DescribeDBSubnetGroups",
           "rds:ListTagsForResource",
-          "rds:DeleteDBSubnetGroup"
+          "rds:DeleteDBSubnetGroup",
+
+          // Additional actions used for services/ecs-cluster
+          "iam:CreateRole",
+          "iam:TagRole",
+          "iam:GetRole",
+          "iam:GetRole",
+          "iam:ListRolePolicies",
+          "iam:ListAttachedRolePolicies",
+          "iam:ListInstanceProfilesForRole",
+          "iam:DeleteRole",
+          "iam:AttachRolePolicy",
+          "iam:PutRolePolicy",
+          "iam:GetRolePolicy",
+          "iam:DeleteRolePolicy",
+
+          "logs:CreateLogGroup",
+          "logs:TagResource",
+          "logs:PutRetentionPolicy",
+          "logs:DescribeLogGroups",
+          "logs:ListTagsForResource",
+          "logs:DeleteLogGroup",
+
+          "ecs:CreateCluster",
+          "ecs:TagResource",
+          "ecs:DescribeClusters",
+          "ecs:DeleteCluster",
+          "ecs:PutClusterCapacityProviders"
         ]
         Resource = "*"
       }
