@@ -12,6 +12,7 @@ This service provides a shared Amazon ECS cluster for running containerized appl
 
 * The task execution role `ecs_task_execution` includes the permissions required to run containers (ECR access, log writing, and secrets access).
 * The default task role `ecs_task` includes basic application permissions that should be extended as needed.
+* The service-linked role `ecs` is required by ECS to manage infrastructure-level operations such as assigning capacity providers (`FARGATE`, `FARGATE_SPOT`). This role is automatically trusted by the ECS service and is created with AWS-managed permissions.
 
 Secrets Manager access is also scoped to environment under `scottylabs/{environment}/*`.
 
