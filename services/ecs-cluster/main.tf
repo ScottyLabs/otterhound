@@ -55,6 +55,9 @@ resource "aws_ecs_cluster" "main" {
 
 # Capacity Providers
 resource "aws_ecs_cluster_capacity_providers" "main" {
+  # The ECS service-linked role is needed to assign capacity providers
+  depends_on = [aws_iam_service_linked_role.ecs]
+
   cluster_name = aws_ecs_cluster.main.name
 
   capacity_providers = ["FARGATE", "FARGATE_SPOT"]
