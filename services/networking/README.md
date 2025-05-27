@@ -58,7 +58,7 @@ There are a few common security groups meant for other services to use:
 
 ## Usage
 
-Other services can reference this networking infrastructure via remote state:
+Other services can reference this networking infrastructure via data blocks:
 
 ```terraform
 # services/example-service/main.tf

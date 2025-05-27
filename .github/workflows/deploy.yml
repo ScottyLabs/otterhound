@@ -11,20 +11,20 @@ on:
         description: "Services to deploy (comma-separated, leave empty for all)"
         required: false
         type: string
-        default: ''
+        default: ""
       environments:
         description: "Environments to deploy to"
         required: true
         type: choice
         options:
-        - "dev"
-        - "staging"
-        - "prod"
-        - "dev,staging"
-        - "dev,prod"
-        - "staging,prod"
-        - "dev,staging,prod"
-        default: "dev"
+          - "dev"
+          - "staging"
+          - "prod"
+          - "dev,staging"
+          - "dev,prod"
+          - "staging,prod"
+          - "dev,staging,prod"
+        default: "dev,staging,prod"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
