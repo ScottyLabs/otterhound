@@ -19,6 +19,12 @@ validate_dir() {
 # Export the function so it's available in subshells
 export -f validate_dir
 
+find . -type f -name "*.tf" \
+  -not -path "*/.terraform/*" \
+  -exec dirname {} \; | sort -u | while read -r dir; do
+  validate_dir "$dir"
+done
+
 # Check if directories are provided via stdin
 if [ -t 0 ]; then
   # No input from stdin, find all non-hidden directories with .tf files

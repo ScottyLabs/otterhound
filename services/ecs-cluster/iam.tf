@@ -1,10 +1,3 @@
-# IAM role for allowing ECS to interact with other AWS services,
-# i.e. managing Fargate capacity providers.
-resource "aws_iam_service_linked_role" "ecs" {
-  # Required permissions are attached automatically
-  aws_service_name = "ecs.amazonaws.com"
-}
-
 # IAM role for ECS task execution
 # Used by ECS when starting up containers with Fargate
 resource "aws_iam_role" "ecs_task_execution" {
