@@ -56,7 +56,7 @@ jobs:
       - name: Run validation script
         if: steps.changed-terraform.outputs.any_changed == 'true'
         run: |
-          echo '${{ steps.changed-terraform.outputs.all_changed_files }}' | \
+          echo '${{ fromJson(steps.changed-terraform.outputs.all_changed_files) }}' | \
           jq -r '.[]' | .github/scripts/validate.sh
 
       - name: Skip validation message
