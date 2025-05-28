@@ -57,7 +57,9 @@ jobs:
         if: steps.changed-terraform.outputs.any_changed == 'true'
         run: |
           echo '${{ fromJson(steps.changed-terraform.outputs.all_changed_files) }}' | \
-          jq -r '.[]' | .github/scripts/validate.sh
+          jq -r '.[]' | while read -r file; do
+            .github/scripts/validate.sh "$file"
+          done
 
       - name: Skip validation message
         if: steps.changed-terraform.outputs.any_changed == 'false'
