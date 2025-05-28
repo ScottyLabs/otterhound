@@ -92,6 +92,7 @@ locals {
           "iam:PutRolePolicy",
           "iam:GetRolePolicy",
           "iam:DeleteRolePolicy",
+          "iam:CreateServiceLinkedRole",
 
           "logs:CreateLogGroup",
           "logs:TagResource",
